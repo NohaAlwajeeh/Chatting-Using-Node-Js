@@ -1,0 +1,157 @@
+<html>
+  <head>
+    <title>Chattrbox</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+      <link href="https://fonts.googleapis.com/css?family=Dancing+Script&display=swap" rel="stylesheet">
+    
+  </head>
+
+  <body class="container chat-wrapper">
+
+    <header class="chat-app-header">
+      <h1>Chat<i class='fas fa-comments' style='font-size:36px'></i></h1>
+    </header>
+
+    <div class="panel panel-default chat-messages" id="chat" 
+         style="background-color: white;">
+        <ul class="panel-body chat-message-list" id="js-message-list"></ul>
+    </div>
+
+    <section class="chat-input was-validated">
+        <form id="form" class="cb-container">
+       <label for="js-message-input">Messsage:</label>
+        <div class="input-group">
+          
+    <input type="text" class="form-control" id="js-message-input" placeholder="Enter the message " name="uname" required  onkeyup="manage(this)">
+      <div class="valid-feedback">Valid.</div>
+      <div class="invalid-feedback">
+          Please fill out this field.</div>
+          <span class="input-group-btn">
+            <button class="btn btn-primary" type="button" id="send"  disabled> <i class="fa fa-send" style="font-size:20px;color:white"></i></button>
+          </span>
+           
+        </div><!-- /input-group -->
+   </form>
+    </section>
+      <br>
+      <script>
+         var s = new WebSocket("ws://localhost:3250");
+          
+        var chat = document.getElementById("chat");
+          
+        var user_name = prompt("Enter your name");  
+          
+        var input =  document.getElementById("js-message-input"),
+            
+            send = document.getElementById("send"),
+            
+            form = document.getElementById("form");
+            
+          function manage(txt) {
+              
+        var bt = document.getElementById('send');
+              
+        if (txt.value != '') {
+            
+            bt.disabled = false;
+        }
+        else {
+            
+            bt.disabled = true;
+        }
+    }      
+        send.addEventListener("click",()=>{
+            
+         var message = document.getElementById("js-message-input").value;
+            
+                 var o = message.split(" ");
+            
+                  message = " ";
+             
+                  o.forEach((value)=>{
+                      
+                      if(value !== "حيوان"){
+                          
+                          message += value;  
+                          // alert(message);
+                        }
+                  });
+                 if(message === 'س'){
+                     
+                        message+= 'سلام عليكم'
+                    }
+                  if(message === 'و'){
+                      
+                     message+= 'وعليكم السلام'
+                 }
+            
+            var msg = JSON.stringify({sender:user_name,data:message});
+            
+            s.send(msg);
+            
+             chat.innerHTML+= "<i>you "+message+"<br></i>";
+            
+            form.reset();
+            
+        });
+          
+                  
+             input.addEventListener("keypress",(event)=>{
+                 
+            if(event.keyCode == 13) {
+                    
+         var message = document.getElementById("js-message-input").value;
+                    var o = message.split(" ");
+            
+                  message = " ";
+             
+                  o.forEach((value)=>{
+                      
+                      if(value !== "حيوان"){
+                          
+                          message += value;  
+                          // alert(message);
+                        }
+                  });
+                 if(message === 'س'){
+                     
+                        message = 'سلام عليكم';
+                    }
+                  if(message === 'و'){
+                      
+                     message = 'وعليكم السلام';
+                 }
+             if(message !== "")
+            {
+            var msg = JSON.stringify({sender:user_name,data:message});
+            
+            s.send(msg);
+            
+             chat.innerHTML+= "<i>you "+message+"<br></i>";
+            form.reset();
+                }
+                else{
+                    document.getElementsByTagName("invalid-feedback");
+                }
+            }
+        });
+ 
+          
+          s.onmessage = function(event){
+               
+              chat.innerHTML+= event.data+"<br>";
+          }
+          
+      </script>
+      
+<script src='https://kit.fontawesome.com/a076d05399.js'></script>
+     
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js" type="text/javascript" charset="utf-8"></script>
+  </body>
+</html>
+
